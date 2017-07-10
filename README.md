@@ -1,2 +1,2 @@
 # CrackingTheCodingInterview
-First commit! excercises from chapter 1, 2, 3, 4
+Exercise in C++ from the book Cracking the Coding Interview (version 6)
