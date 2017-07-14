@@ -8,63 +8,10 @@
 using namespace std;
 
 
-
-// template <class T>
-// vector<vector<T> > BSTSecuences0(Node<T> * root, vector<vector<T> > & result){
-	
-	// if(root == NULL) return result;
-	
-	
-	// BSTSecuences0(root->left, result.push_back(root->data));
-	// BSTSecuences0(root->right, result.push_back(root->data));
-	
-	// return result;
-// }
-
-// template <class T>
-// vector<vector<T> > BSTSecuences0(Node<T> * root){
-	// vector<vector<T> > result;
-	// BSTSecuences0(root, result);
-	// return result;
-// }
-
-
-// // -------------------------------------------
-
-// template <class T>
-// vector<T> secuence(Node<T> * node, vector<T> & v){
-	// if(node == NULL) return v;
-	// v.push_back(node->data);
-	// secuence(node->left, v);
-	// secuence(node->right, v);
-// }
-
-// template <class T>
-// vector<vector<T> > BSTSecuences(Node<T> * root, vector<vector<T> > & result){
-	
-	// if(root == NULL) return result;
-	
-	// result.push_back()
-	
-	// BSTSecuences0(root->left, result.push_back(root->data));
-	// BSTSecuences0(root->right, result.push_back(root->data));
-	
-	// return result;
-// }
-
-// template <class T>
-// vector<vector<T> > BSTSecuences(Node<T> * root){
-	// vector<vector<T> > result;
-	// BSTSecuences(root, result);
-	// return result;
-// }
-
 // from CTCI
 /* Weave lists together in all possible ways. This algorithm works by removing the
  * head from one list, recursing, and then doing the same thing with the other
  * list. */
-
- 
 template <class T>
 void weaveLists(vector<T> & first, vector<T> & second, vector<vector<T> > & results, vector<T> & prefix){
 	/* One list is empty. Add remainder to [a cloned] prefix and store result. */
@@ -121,13 +68,8 @@ vector<vector<T> > allSequences(Node<T>* node){
 	int i = 0;
 	for(auto left : leftSeq){
 		for(auto right : rightSeq){
-			// cout << "left = " << *left.begin() << " | " << "right = " << *right.begin() << endl;
-			// cout << i << endl; i++;
-			// cout << "size left = " << left.size() << endl;
-			// cout << "size right = " << right.size() << endl;
 			vector<vector<T> > weaved;
 			weaveLists(left, right, weaved, prefix);
-			cout << weaved.size() << endl;
 			result.insert(result.begin(), weaved.begin(), weaved.end());
 		}
 	}
@@ -148,7 +90,6 @@ void print(vector<vector<T> > & v){
 }
 
 
-
 int main(){
 	
 	Node<int> * root = new Node<int>(2);
@@ -158,6 +99,8 @@ int main(){
 	auto res = allSequences(root);
 	cout << "--------------------" << endl;
 	print(res);
+	
+	
 	
 	return 0;
 }
