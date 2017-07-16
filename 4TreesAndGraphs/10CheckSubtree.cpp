@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <string>
 
 using namespace std;
 
@@ -34,6 +35,24 @@ bool checkSubtree(Node<T> * t1, Node<T> * t2){
 	return checkSubtree(t1->left, t2) or checkSubtree(t1->right, t2);
 }
 
+//// other approach, solución CTCI
+template <class T>
+bool checkSubtree2(Node<T> * t1, Node<T> * t2){
+	string s1, s2;
+	preOrder(t1, s1);
+	preOrder(t2, s2);
+	return s1.find(s2)!=string::npos;
+}
+
+//cuidado con el separador X. Si aparece en el árbol, el resultado podría ser incorrecto.
+template <class T>
+void preOrder(Node<T> * t, string & s){
+	if(t==NULL) {s.push_back('X'); return;}
+	s.append(to_string(t->data));
+	preOrder(t->left, s);
+	preOrder(t->right, s);
+	return;
+}
 
 
 int main(){
@@ -59,10 +78,13 @@ int main(){
 	node7b->right = node8b;
 	
 	cout << checkSubtree(node6, node7) << endl;//1
+	cout << checkSubtree2(node6, node7) << endl;//1
 	cout << checkSubtree(node6, node7b) << endl;//1
+	cout << checkSubtree2(node6, node7b) << endl;//1
 	
 	node7b->right = node7;//0
 	assert(checkSubtree(node6, node7b) == 0);
+	assert(checkSubtree2(node6, node7b) == 0);
 	node7b->right = node8b;
 	
 	Node<int> * node7c = new Node<int>(7);
@@ -72,5 +94,19 @@ int main(){
 	node7c->right = node8;
 	
 	assert(checkSubtree(node6, node7b) == 1);
+	assert(checkSubtree2(node6, node7b) == 1);
 	
+	node5b->left = node7b;
+	node5b->right = node8b;
+	node7b->left = NULL;
+	node7b->right = NULL;
+	
+	
+	node5->left = node7;
+	node7->left = node8;
+	node7->right = NULL;
+	assert(checkSubtree(node5, node5b) == 0);
+	assert(checkSubtree2(node5, node5b) == 0);
+	
+	return 0;
 }
