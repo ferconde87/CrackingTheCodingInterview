@@ -23,8 +23,14 @@ class Node{
 		Node<T> * insert(Node<T> * node, T data, int index, Node<T> * parent);
 		Node<T> * del(T data);//TODO
 		void del(Node<T> * root, T data);//TODO
+		// Node<T> * del2(Node<T> * node);
+		// Node<T> * del2(T data);
+		// Node<T> * del2(Node<T> * node, T data);
+		// Node<T> * del2Aux(T data);
 		Node<T> * next();
+		Node<T> * previous();
 		void inOrder();
+		void inOrder(Node<T> * node);
 		bool find(T data);
 		bool find(Node<T> * node, T data);
 		Node<T> * getParent(T data);
@@ -70,11 +76,16 @@ bool Node<T>::find(T data){
 }	
 
 template <class T>
+void Node<T>::inOrder(Node<T> * node){
+	if(node == NULL) return;
+	inOrder(node->left);
+	cout << node->data << " ";
+	inOrder(node->right);
+}
+
+template <class T>
 void Node<T>::inOrder(){
-	if(this == NULL) return;
-	this->left->inOrder();
-	cout << this->data << " ";
-	this->right->inOrder();
+	inOrder(this);
 }
 
 template <class T>
@@ -121,6 +132,8 @@ Node<T> * Node<T>::insert(T data, int index){
 	//~ return node;
 //~ }
 
+// del 1
+
 template <class T>
 void Node<T>::del(Node<T> * node, T data){
 	if(node == NULL) return;
@@ -133,20 +146,45 @@ void Node<T>::del(Node<T> * node, T data){
 		Node<T> * next = node->next();
 		if(next == node->right){
 			next->left = node->left;
+			node->left->parent = next;
+			node->parent->right = next;
+			node->right->parent = next;
 		}else{
-			Node<T> * parent = node->parent;
-			Node<T> * grandparent = parent->parent;
-			next->left = grandparent->left;
-			if(grandparent != NULL){
-				next->left = grandparent->left;
-			}
-			next->right = parent;
-			parent->left = NULL;
+			next->left = node->left;
+			node->left->parent = next;
+			next->right = node->right;
+			node->right->parent = next;
+			next->parent->left = NULL;
+			node->parent->right = next;
+			node = NULL;
+			
+			// Node<T> * grandparent = parent->parent;
+			// next->left = grandparent->left;
+			// if(grandparent != NULL){
+				// next->left = grandparent->left;
+			// }
+			// next->right = parent;
+			// parent->left = NULL;
+
+			
 		}
-	}else if(node->left != NULL){
-		node = node->left;
+	}else if(node->right != NULL){
+		//TODO calcular el next !
+		// node = node->right;
+		Node<T> * next = node->next();
+		node->parent->right = next;
+		next->parent = node->parent;
+		next->left = node->left;
+		node = NULL;
 	}else{
-		node = node->right;
+		// node = node->left;
+		cout << "node->left " << node->left->data << endl;
+		cout << "node->parent " << node->parent->data << endl;
+		cout << "node" << node->data << endl;
+		cout << "hola" << endl;
+		node->parent->right = node->left;
+		node->left->parent = node->parent;
+		node = NULL;
 	}
 }
 
@@ -168,11 +206,75 @@ Node<T> * Node<T>::del(T data){
 				next->right = parent;
 			}
 			return next;//la nueva raíz
+		}else if(this->left != NULL){
+			Node<T> * next = this->previous();
+			if(next == NULL) return NULL;
+			Node<T> * parent = next->parent;
+			if(parent != this){//si parent == this no hay que hacer nada, solo devolver como nueva raíz a next
+				next->left = this->left;
+				parent->right = NULL;
+				next->left = parent;
+			}
+			return next;
+		}else{
+			return NULL;
 		}
 	}
 	del(this, data);
 	return this;
 }
+
+//--- del 2
+// template <class T>
+// Node<T> * Node<T>::del2(Node<T> * node){
+	// if(node->right != NULL){
+		// Node<T> * next = node->next();
+		// if(next == NULL) return NULL;//hay un solo nodo
+		// Node<T> * parent = next->parent;
+		// if(parent == node){//hay un solo elemento a la derecho
+			// cout << "hasta aqui" << endl;
+			// next->left = node->left;
+			// cout << "oooo " << endl;
+		// }else{
+			// parent->parent no puede ser NULL xq sino parent == node
+			// Node<T> * grandparent = parent->parent;
+			// next->left = grandparent->left;
+			// parent->left = NULL;
+			// next->right = parent;
+		// }
+		// return next;//la nueva raíz
+	// }else if(node->left != NULL){
+		// cout << "hasta aca" << endl;
+		// Node<T> * next = node->previous();
+		// if(next == NULL) return NULL;
+		// Node<T> * parent = next->parent;
+		// if(parent != node){//si parent == node no hay que hacer nada, solo devolver como nueva raíz a next
+			// next->left = node->left;
+			// parent->right = NULL;
+			// next->left = parent;
+		// }
+		// return next;
+	// }else{
+		// return NULL;
+	// }	
+// }
+
+
+// template <class T>
+// Node<T> * Node<T>::del2(T data){
+	// cout << this->data << endl;
+	// if(this == NULL) return NULL;
+	// Node<T> * newRoot = NULL;
+	// if(this->data == data){
+		// newRoot = this->del2(this); 
+	// }else{
+		// if(this->left != NULL) newRoot = this->left->del2(data);
+		// if(this->right != NULL) newRoot = this->right->del2(data);
+	// }
+	// if(newRoot == NULL) return this;
+	// return newRoot;
+// }
+
 
 template <class T>
 Node<T> * mostLeft(Node<T> * node){
@@ -183,12 +285,27 @@ Node<T> * mostLeft(Node<T> * node){
 	return node;
 }
 
-
 template <class T>
 Node<T> * Node<T>::next(){
 	if(this == NULL) return NULL;
 	if(this->right == NULL) return NULL;
 	return mostLeft(this->right);
+}
+
+template <class T>
+Node<T> * mostRight(Node<T> * node){
+	Node<T> * result = node;
+	while(node->right != NULL){
+		node = node->right;
+	}
+	return node;
+}
+
+template <class T>
+Node<T> * Node<T>::previous(){
+	if(this == NULL) return NULL;
+	if(this->left == NULL) return NULL;
+	return mostLeft(this->left);
 }
 
 
@@ -233,18 +350,6 @@ void Tree<T>::del(T data){
 int main(){
 	//testeo node
 	Node<int> * root = new Node<int>(5, 0, NULL);
-	//~ Node<int> * root = new Node<int>(3, 1);
-	//~ Node<int> * root = new Node<int>(2, 2);
-	//~ Node<int> * root = new Node<int>(4, 3);
-	//~ Node<int> * root = new Node<int>(8, 4);
-	//~ Node<int> * root = new Node<int>(6, 5);
-	//~ Node<int> * root = new Node<int>(10, 6);
-	//~ auto node3 = root->insert(3,1,root);
-	//~ auto node2 = root->insert(2,2,node3);
-	//~ auto node4 = root->insert(4,3,node3);
-	//~ auto node8 = root->insert(8,4,root);
-	//~ auto node6 = root->insert(6,5,node8);
-	//~ auto node10 = root->insert(10,6,node8);
 	auto node3 = root->insert(3,1);
 	auto node2 = root->insert(2,2);
 	auto node4 = root->insert(4,3);
@@ -269,14 +374,78 @@ int main(){
 	cout << "root->left->data = " << root->left->data << endl;
 	cout << "root->right->data = " << root->right->data << endl;
 	root->inOrder(); cout << endl;
-	//~ root->del(2);
-	//~ assert(root->find(2) == true);
+
+	cout << "--- Casos en donde se borra la raíz ---" << endl;
 	
-	//~ root->del(5);
-	//~ root->inOrder();cout << endl;
-	//~ assert(root->find(5); 
+	cout << "caso 1" << endl;
+	Node<int> * root2 = new Node<int>(4, 0, NULL);
+	root2->insert(1,1);
+	root2->insert(2,2);
+	root2->insert(3,3);
+	root2->inOrder();cout << endl;
+	root2 = root2->del(4);
+	root2->inOrder();cout << endl;
+
+	cout << "caso 2" << endl;
+	Node<int> * root3 = new Node<int>(4, 0, NULL);
+	root3->insert(5,1);
+	root3->inOrder();cout << endl;
+	root3 = root3->del(4);cout << "delete 4" << endl;
+	root3->inOrder();cout << endl;
+
+	cout << "caso 3" << endl;
+	auto root4 = new Node<int>(4, 0, NULL);
+	root4->insert(3,1);
+	root4->inOrder();cout << endl;
+	root4 = root4->del(4);cout << "delete 4" << endl;
+	root4->inOrder();cout << endl;
 	
-	//~ root->inOrder();cout << endl;
+	cout << "caso 4" << endl;
+	Node<int> * root5 = new Node<int>(4, 0, NULL);
+	root5->insert(2,1);
+	root5->insert(6,2);
+	root5->insert(5,3);
+	root5->inOrder();cout << endl;
+	root5 = root5->del(4);
+	root5->inOrder();cout << endl;
+	assert(root5->data == 5);
 	
+	cout << "--- caso general --- " << endl;
+	Node<int> * root6 = new Node<int>(5, 0, NULL);
+	root6->insert(2,1);
+	root6->insert(1,2);
+	root6->insert(3,3);
+	root6->insert(7,4);
+	root6->insert(8,6);
+	root6->insert(6,6);
+	root6->inOrder(); cout << endl;
+	root6 = root6->del(7);
+	root6->inOrder();cout << endl;
+	assert(root6->data == 5);
+
+	
+	cout << "--- caso general 2 --- " << endl;
+	auto root7 = new Node<int>(5, 0, NULL);
+	root7->insert(2,1);
+	root7->insert(1,2);
+	root7->insert(3,3);
+	root7->insert(8,4);
+	root7->insert(7,6);
+	root7->insert(11,7);
+	root7->insert(6,8);
+	root7->insert(10,9);
+	root7->insert(9,10);
+	root7->inOrder(); cout << endl;
+	cout << "borrar 8" << endl;
+	root7 = root7->del(8);
+	root7->inOrder();cout << endl;
+	assert(root7->data == 5);
+	cout << "borrar 11" << endl;
+	root7 = root7->del(11);
+	root7->inOrder();cout << endl;
+	cout << "borrar 9" << endl; 
+	root7 = root7->del(9);
+	assert(root7->data == 5);
+	root7->inOrder();cout << endl;
 	
 }
