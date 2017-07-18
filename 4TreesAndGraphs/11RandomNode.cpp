@@ -35,8 +35,25 @@ class Node{
 		bool find(Node<T> * node, T data);
 		Node<T> * getParent(T data);
 		Node<T> * getParent(Node<T> * node, T data);
+		Node<T> * getNode(Node<T> * node, T data);
+		Node<T> * getNode(T data);
 };
 
+
+
+template <class T>
+Node<T>* Node<T>::getNode(Node<T> * node, T data){
+	if(node == NULL) return NULL;
+	if(node->data == data) return node;
+	Node<T> * result = getNode(node->left, data);
+	if(result != NULL) return result;
+	return getNode(node->right, data);
+}
+
+template <class T>
+Node<T>* Node<T>::getNode(T data){
+	return getNode(this, data);
+}
 
 template <class T>
 bool Node<T>::find(Node<T> * node, T data){
@@ -144,46 +161,52 @@ void Node<T>::del(Node<T> * node, T data){
 		node = NULL;
 	}else if(node->left != NULL && node->right != NULL){
 		Node<T> * next = node->next();
+
+		//FALTA DEFINIR EL ALGORITMO.
+		//si next tiene algún hijo derecho.. que hay que hacer?
+		//una solución es cambiar el algoritmo next() para que 
+			//si next tiene hijo derecho... devuelva este hijo, en lugar de como está ahora
+		
 		if(next == node->right){
-			next->left = node->left;
-			node->left->parent = next;
-			node->parent->right = next;
-			node->right->parent = next;
+			cout << "borrando a ......." << node->data << endl;
+			next->left = node->left;//OK
+			node->left->parent = next;//OK
 		}else{
-			next->left = node->left;
-			node->left->parent = next;
+			next->left = node->left;//OK
+			node->left->parent = next;//OK
 			next->right = node->right;
 			node->right->parent = next;
 			next->parent->left = NULL;
-			node->parent->right = next;
-			node = NULL;
-			
-			// Node<T> * grandparent = parent->parent;
-			// next->left = grandparent->left;
-			// if(grandparent != NULL){
-				// next->left = grandparent->left;
-			// }
-			// next->right = parent;
-			// parent->left = NULL;
-
-			
 		}
+		//actualizamos el padre de next y el hijo del padre del nodo a borrar
+		Node<T> * parent = node->parent;
+		if(parent->left == node){
+			parent->left = next;
+		}else{
+			parent->right = next;
+		}
+		next->parent = parent;
+				
+		node = NULL;
 	}else if(node->right != NULL){
-		//TODO calcular el next !
-		// node = node->right;
-		Node<T> * next = node->next();
-		node->parent->right = next;
-		next->parent = node->parent;
-		next->left = node->left;
+		Node<T> * parent = node->parent;
+		Node<T> * son = node->right;
+		if(parent->left == node){
+			parent->left = son;
+		}else{
+			parent->right = son;
+		}
+		son->parent = parent;
 		node = NULL;
 	}else{
-		// node = node->left;
-		cout << "node->left " << node->left->data << endl;
-		cout << "node->parent " << node->parent->data << endl;
-		cout << "node" << node->data << endl;
-		cout << "hola" << endl;
-		node->parent->right = node->left;
-		node->left->parent = node->parent;
+		Node<T> * parent = node->parent;
+		Node<T> * son = node->left;
+		if(parent->left == node){
+			parent->left = son;
+		}else{
+			parent->right = son;
+		}
+		son->parent = parent;
 		node = NULL;
 	}
 }
@@ -435,17 +458,33 @@ int main(){
 	root7->insert(6,8);
 	root7->insert(10,9);
 	root7->insert(9,10);
+	
+	assert((root7->getNode(8))->data == 8);
+	
 	root7->inOrder(); cout << endl;
 	cout << "borrar 8" << endl;
 	root7 = root7->del(8);
 	root7->inOrder();cout << endl;
-	assert(root7->data == 5);
-	cout << "borrar 11" << endl;
-	root7 = root7->del(11);
-	root7->inOrder();cout << endl;
-	cout << "borrar 9" << endl; 
-	root7 = root7->del(9);
-	assert(root7->data == 5);
-	root7->inOrder();cout << endl;
+	
+	// Node<int> * n11 = root7->getNode(11);
+	// cout << n11->data << endl;
+	// Node<int> * n5 = root7->getNode(5);
+	// assert(n5->data == 5);
+	// cout << "n5->right->data " << n5->right->data << endl; 
+	// assert(root7->data == 5);
+	// Node<int> * n9 = root7->getNode(9);
+	// assert(n9->left->data == 7);
+	// assert(n9->right->data == 11);
+
+	// cout << "borrar 11" << endl;
+	// assert(n11->right == NULL);
+	// root7 = root7->del(11);
+	// root7->inOrder();cout << endl;
+	// assert(n9->right->data == 10);
+	
+	// cout << "borrar 9" << endl; 
+	// root7 = root7->del(9);
+	// assert(root7->data == 5);
+	// root7->inOrder();cout << endl;
 	
 }
