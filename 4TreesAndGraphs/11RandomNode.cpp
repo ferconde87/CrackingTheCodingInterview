@@ -3,6 +3,10 @@
 #include <queue>
 #include <cassert>
 
+//complejidad de insert, find y delete igual a la del BST sin rebalanceo de nodos (log n) caso promedio, O(n) peor caso
+//complejidad del getRandomNode O(1)
+//ejercicio sin terminar o.O O.o
+
 using namespace std;
 
 template <class T>
