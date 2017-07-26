@@ -24,7 +24,6 @@ int flipBitToWin(string s){
 	int left = 0;
 	int right = 0;
 	bool fliped = false;
-	int cur = 0;
 	int res = 0;
 	for(char c : s){
 		if(c == '0'){
@@ -32,11 +31,10 @@ int flipBitToWin(string s){
 				fliped = true;
 			}else{
 				if(right != 0){
-					cur = left + right + 1;
-					res = max(cur, res);
+					res = max(left + right + 1, res);
 					left = right;
 					right = 0;
-				}else{
+				}else{//implica que hay 2 o + ceros seguidos
 					left = 0;
 					fliped = true;
 				}
@@ -60,13 +58,35 @@ int flipBitToWin(int x){
 	string s = convertToBinaryString(x);	
 	return flipBitToWin(s);
 }
+
+//2da versión mejorada mix 1er versión + CTCI
+int flipBit(int x){
+	if(~x == 0) return 32;
+	int curLen = 0;
+	int prevLen = 0;
+	int maxLen = 0;
+	bool twoZeros = false;
+	for(int i = 0; i < 31; i++){
+		if(getBit(x, i) == 1){
+			twoZeros = false;
+			curLen++;
+		}else{
+			prevLen = twoZeros ? 0 : curLen;
+			curLen = 0;
+			twoZeros = true;
+		}
+		maxLen = max(prevLen + curLen + 1, maxLen);
+	}
+	return maxLen;
+}
 		   
 int main(){
 	
 	int x = 1775;
 	cout << convertToBinaryString(x) << endl;
 	cout << flipBitToWin(x) << endl;
-	
+	cout << flipBit(x) << endl;
+	cout << "----------------------" << endl;
 	string s;
 	s = "1111";
 	assert(flipBitToWin(s)==4);
@@ -79,5 +99,7 @@ int main(){
 	s = "111011100111111101";
 	assert(flipBitToWin(s)==9);
 
+	cout << convertToBinaryString(-1) << endl;
+	
 	return 0;
 }
