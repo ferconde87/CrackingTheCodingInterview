@@ -9,11 +9,9 @@ int repeatedArithmeticShift(int x, int count){
 	return x;
 }
 
-
 bool getBit(int num, int i){
 	return ((num & (1 << i)) != 0);
 }
-
 
 int setBit(int num, int i){
 	return num | (1 << i);
@@ -39,4 +37,19 @@ void printBits(int num){
 		cout << getBit(num, i);
 	}
 	cout << endl;	
+}
+
+string convertToBinaryString(int x){
+	string s;
+	for(int i = 31; i >= 0; i--){
+		s.push_back('0' + getBit(x, i));
+	}
+	return s;
+}
+
+int getAmountOfOnes(int x){
+	int count = 0;
+	for(; x != 0; x = x & (x-1))
+		count++;
+	return count;
 }

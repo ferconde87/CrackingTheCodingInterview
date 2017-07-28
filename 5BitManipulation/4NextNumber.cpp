@@ -51,15 +51,7 @@ string prevNumber(string s){
 	return s; 
 }
 
-string prevNumber(int x){
-	string s = convertToBinaryString(x);
-	return prevNumber(s);
-}
 
-string nextNumber(int x){
-	string s = convertToBinaryString(x);
-	return nextNumber(s);
-}
 
 int binaryStringToInt(string s){
 	long long res = 0;
@@ -73,121 +65,185 @@ int binaryStringToInt(string s){
 }
 
 
+//versiones nextNumber 1, 2 y 3 NOT WORKING dan un próximo y un anterior pero no el menor próximo ni el mayor anterior...
 
-// Versión mejorada: sin convertir el número a string 
-int nextNumber2(int x){
-	int i = 0;
-	for(; i < 32; i++){
-		if((x & (1 << i)) != 0){//hay un 1 en la posición i
-			x &= ~(1 << i);//set 0 at pos i
-			break;
-		}
+// string prevNumber(int x){
+	// string s = convertToBinaryString(x);
+	// return prevNumber(s);
+// }
+
+// string nextNumber(int x){
+	// string s = convertToBinaryString(x);
+	// return nextNumber(s);
+// }
+
+
+// // 
+// // Versión mejorada: sin convertir el número a string 
+// int nextNumber2(int x){
+	// int i = 0;
+	// for(; i < 32; i++){
+		// if((x & (1 << i)) != 0){//hay un 1 en la posición i
+			// x &= ~(1 << i);//set 0 at pos i
+			// break;
+		// }
+	// }
+	// i++;
+	// for(; i < 32; i++){
+		// if((x & (1 << i)) == 0){//hay un 0 at pos i
+			// x |= (1 << i);
+			// break;
+		// }
+	// }
+	// return x;
+// }
+
+// int prevNumber2(int x){
+	// int i = 0;
+	// for(; i < 32; i++){
+		// if((x & (1 << i)) == 0){//hay un 0 en la posición i
+			// x |= (1 << i);//set 1 at pos i
+			// break;
+		// }
+	// }
+	// i++;
+	// for(; i < 32; i++){
+		// if((x & (1 << i)) != 0){//hay un 1 at pos i
+			// x &= ~(1 << i);//set 0
+			// break;
+		// }
+	// }
+	// return x;
+// }
+
+// //versión con define
+// #define bitIs0(x, i) (x & (1 << i)) == 0
+// #define bitIs1(x, i) (x & (1 << i)) != 0
+// #define set1(x, i) x |= (1 << i)
+// #define set0(x, i) x &= ~(1 << i)
+
+// int nextNumber3(int x){
+	// int i = 0;
+	// for(; i < 32; i++){
+		// if(bitIs1(x,i)){
+			// set0(x,i);
+			// break;
+		// }
+	// }
+	// i++;
+	// for(; i < 32; i++){
+		// if(bitIs0(x,i)){
+			// set1(x,i);
+			// break;
+		// }
+	// }
+	// return x;	
+// }
+
+// int prevNumber3(int x){
+	// int i = 0;
+	// for(; i < 32; i++){
+		// if(bitIs0(x,i)){
+			// set1(x,i);
+			// break;
+		// }
+	// }
+	// i++;
+	// for(; i < 32; i++){
+		// if(bitIs1(x,i)){
+			// set0(x,i);
+			// break;
+		// }
+	// }
+	// return x;
+// }
+
+//////////////////////////////////////////////////////
+// Las otras soluciones no siempre dan el número más próximo o anterior
+//////////////////////////////////////////////////////
+int nextNumber4(int x){
+	int i = 0; int ones = 0;
+	while((x & (1 << i)) == 0)
+		i++;
+	while((x & (1 << i)) != 0){
+		i++;
+		ones++;
 	}
-	i++;
-	for(; i < 32; i++){
-		if((x & (1 << i)) == 0){//hay un 0 at pos i
-			x |= (1 << i);
-			break;
-		}
-	}
+	
+	if(ones == 0) { cout << "Error: todos 0's" << endl; return -1; }
+	if(i == 31) { cout << "Error: no núm +grande con = #1's" << endl; return -1; }
+	
+	x |= (1 << i);
+	x &= ~((1 << i) - 1);//borra todos los bits a la derecha de i
+	x |= ((1 << ones-1) - 1);//seteo 'ones' -1; descuento un 1 xq seteé un 1 antes
 	return x;
 }
 
-int prevNumber2(int x){
-	int i = 0;
-	for(; i < 32; i++){
-		if((x & (1 << i)) == 0){//hay un 0 en la posición i
-			x |= (1 << i);//set 1 at pos i
-			break;
-		}
+int prevNumber4(int x){
+	int i = 0; int zeros = 0;
+	while((x & (1 << i)) != 0){
+		i++;
 	}
-	i++;
-	for(; i < 32; i++){
-		if((x & (1 << i)) != 0){//hay un 1 at pos i
-			x &= ~(1 << i);//set 0
-			break;
-		}
+	while((x & (1 << i)) == 0){
+		i++;
+		zeros++;
 	}
+	x &= ~(1 << i);//seteo un 0 en la posición i // nos aseguramos que el número sea más chico que x
+	//ahora tratamos de hacerl
+	x |= ((1 << i) - 1);//pongo 1s entre posición i+1 a fin
+	x &= ~((1 << zeros-1) - 1);//pongo 'zeros' cantidad de 0s lo más al final posible
+	//x &= ((~0) << zeros-1); otra mask similar como la anterior
+
+	//de está forma el nuevo número es el más grande de los más chicos que x (con la misma #)
 	return x;
 }
 
-//versión con define
-#define bitIs0(x, i) (x & (1 << i)) == 0
-#define bitIs1(x, i) (x & (1 << i)) != 0
-#define set1(x, i) x |= (1 << i)
-#define set0(x, i) x &= ~(1 << i)
-
-int nextNumber3(int x){
-	int i = 0;
-	for(; i < 32; i++){
-		if(bitIs1(x,i)){
-			set0(x,i);
-			break;
-		}
-	}
-	i++;
-	for(; i < 32; i++){
-		if(bitIs0(x,i)){
-			set1(x,i);
-			break;
-		}
-	}
-	return x;	
+//Arithmetic Approach idea CTCI + solución anterior
+int getNextArith(int n){
+	int c0 = 0; int c1 = 0; int i = 0;
+	for(;((n & (1 << i)) == 0);i++) c0++;
+	for(;((n & (1 << i)) != 0);i++) c1++;
+	return n + (1 << c0) + (1 << (c1 - 1)) - 1;
 }
 
-int prevNumber3(int x){
-	int i = 0;
-	for(; i < 32; i++){
-		if(bitIs0(x,i)){
-			set1(x,i);
-			break;
-		}
-	}
-	i++;
-	for(; i < 32; i++){
-		if(bitIs1(x,i)){
-			set0(x,i);
-			break;
-		}
-	}
-	return x;
+int getPrevArith(int n){
+	int c0 = 0; int c1 = 0; int i = 0;
+	for(;((n & (1 << i)) != 0);i++) c1++;
+	for(;((n & (1 << i)) == 0);i++) c0++;
+	return n - (1 << c1) - (1 << (c0 - 1)) + 1;	
 }
-
 
 
 int main(){
 	
-	string s = "111010001101";
-	cout << s << endl;
-	cout << binaryStringToInt(s) << endl;
-	
-	string next = nextNumber(s); 
-	cout << next << endl;
-	cout << binaryStringToInt(next) << endl;
-	
-	string prev = prevNumber(s);
-	cout << prev << endl;
-	cout << binaryStringToInt(prev) << endl;
-
-	cout << "2nd version" << endl;
-	cout << 3275 << endl; 
-	cout << nextNumber2(3725) << endl;
-	cout << prevNumber2(3725) << endl;
-	
-	cout << "3rd version" << endl;
-	cout << 3275 << endl; 
-	cout << nextNumber3(3725) << endl;
-	cout << prevNumber3(3725) << endl;
-	
-	//falto contemplar el caso los números negativos
-	//si s tiene 1er índice / s[0] == '1' el número es negativo
-		//el next de los positivos es prev y
-		//el prev es el next
-		
+	cout << "4th version (the first that works well)" << endl;
+	cout << 3725 << endl;
+	cout << nextNumber4(3725) << endl;
+	cout << prevNumber4(3725) << endl;
+	cout << 13948 << endl;
+	cout << nextNumber4(13948) << endl;
+	cout << prevNumber4(13948) << endl;
+	cout << 10115 << endl;
+	cout << prevNumber4(10115) << endl;
+	cout << "5th Arithmetic" << endl;
+	cout << 3725 << endl;
+	cout << getNextArith(3725) << endl;
+	cout << getPrevArith(3725) << endl;
+	cout << 13948 << endl;
+	cout << getNextArith(13948) << endl;
+	cout << getPrevArith(13948) << endl;
+	cout << 10115 << endl;
+	cout << getPrevArith(10115) << endl;		
 	//ademas si todos los números son 0... ie, s es "0...0"
 	//el next que tiene la misma cantidad de 0 y 1 no se puede calcular
 	//en 32bits no hay otro número que tenga 32 0's y 0 números 1
 	//lo mismo para todos 1s "1..1" (el número -1)
+	
+	
+	// int mask = ~((1 << 8) - 1);
+	// cout << convertToBinaryString(mask) << endl;
+	// mask = ((~0) << 8);//más linda 8)
+	// cout << convertToBinaryString(mask) << endl;
 
 	return 0;
 }
