@@ -8,6 +8,7 @@
 
 using namespace std;
 
+#define cn(x) cout << #x << " = " << x << endl;
 
 set<set<int> > powerSet(set<int> s){
 	set<set<int> > ans;
@@ -43,16 +44,53 @@ void print(set<set<int> > & s){
 }
 
 
+void print(vector<vector<int> > & vv){
+	int n = vv.size();
+	cout << "{";
+	for(int i = 0; i < n; i++){
+		cout << "{";
+		int m = vv[i].size();
+		for(int j = 0; j < m; j++){
+			cout << vv[i][j];
+			if(j == m-1) continue;
+			cout << ", ";
+		}
+		if(i == n-1) continue;
+		cout << "},";
+	}
+	cout << "}}" <<endl;
+	
+}
+//using vector
+vector<vector<int> > powerSet(vector<int> & v){
+	vector<vector<int> > ans;
+	vector<int> empty;
+	ans.push_back(empty);
+	for(int x : v){
+		auto copy(ans);
+		for(auto c : copy){
+			c.push_back(x);
+			ans.push_back(c);
+		}
+	}
+	return ans;
+}
+
+
 int main(){
-	set<int> s = {1,2,3};
-	auto ans = powerSet(s); 
-	print(ans);
-	s = {};
-	ans = powerSet(s); 
-	print(ans);
-	s = {1,2,3, 4};
-	ans = powerSet(s); 
-	print(ans);
+	//~ set<int> s = {1,2,3};
+	//~ auto ans = powerSet(s); 
+	//~ print(ans);
+	//~ s = {};
+	//~ ans = powerSet(s); 
+	//~ print(ans);
+	//~ s = {1,2,3, 4};
+	//~ ans = powerSet(s); 
+	//~ print(ans);
+	
+	vector<int> v = {1,2,3};
+	auto vans = powerSet(v);
+	print(vans);
 
 	return 0;
 }
