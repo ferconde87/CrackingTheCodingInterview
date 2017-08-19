@@ -21,6 +21,8 @@ void print(vector<string> & vs){
 	cout << endl;
 }
 
+//quisé construir por casos, no genera todos los casos y repite alguno y se olvida de otro
+//ejemplo... no genera (())(()) ... ver solución CTCI
 vector<string> parens(int n){
 	vector<string> ans;
 	if(n==1){
@@ -64,9 +66,59 @@ vector<string> parens(int n){
 	return ans;
 }
 
+/////////////////////////////CTCI
+void addParen(vector<string> & v, int leftRem, int rightRem, string str, int index){
+	if(leftRem < 0 || rightRem < leftRem) return; //invalid state
+
+	if(leftRem == 0 && rightRem == 0){
+		v.push_back(str);
+	}else{
+		str[index] = '(';// Add left and recurse
+		addParen(v, leftRem-1, rightRem, str, index + 1);
+		
+		str[index] = ')';
+		addParen(v, leftRem, rightRem - 1, str, index + 1);
+	}
+}
+
+vector<string> generateParens(int count){
+	string str;
+	str.resize(count*2);
+	vector<string> v;
+	addParen(v, count, count, str, 0);
+	return v;
+}
+
+
+/////////////////////////////mi versión similar a CTCI
+void addParen2(vector<string> & v, int leftRem, int rightRem, string str){
+	if(leftRem < 0 || rightRem < leftRem) return; //invalid state
+	
+	if(leftRem == 0 && rightRem == 0){
+		v.push_back(str);
+	}else{
+		if(leftRem > 0){
+			str.push_back('(');// Add left and recurse
+			addParen2(v, leftRem-1, rightRem, str);
+		}
+		if(rightRem > 0){
+			str.push_back(')');
+			addParen2(v, leftRem, rightRem - 1, str);
+		}
+	}
+}
+
+vector<string> generateParens2(int count){
+	string str;
+	vector<string> v;
+	addParen2(v, count, count, str);
+	return v;
+}
+
 
 int main(){	
 
+	//parens no OK
 	auto ans = parens(1);
 	print(ans);
 	ans = parens(2);
@@ -75,6 +127,32 @@ int main(){
 	print(ans);
 	ans = parens(4);
 	print(ans);
+	ans = parens(5);
+	print(ans);	
+	cout << endl;
+	
+	ans = generateParens(1);
+	print(ans);
+	ans = generateParens(2);
+	print(ans);
+	ans = generateParens(3);
+	print(ans);
+	ans = generateParens(4);
+	print(ans);
+	ans = generateParens(5);
+	print(ans);	
+	cout << endl;
+	
+	ans = generateParens2(1);
+	print(ans);
+	ans = generateParens2(2);
+	print(ans);
+	ans = generateParens2(3);
+	print(ans);
+	ans = generateParens2(4);
+	print(ans);
+	ans = generateParens2(5);
+	print(ans);	
 	
 	return 0;
 }
