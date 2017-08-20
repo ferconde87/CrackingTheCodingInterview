@@ -91,20 +91,20 @@ vector<string> generateParens(int count){
 
 
 /////////////////////////////mi versión similar a CTCI
-void addParen2(vector<string> & v, int leftRem, int rightRem, string str){
-	if(leftRem < 0 || rightRem < leftRem) return; //invalid state
-	
+void addParen2(vector<string> & v, int leftRem, int rightRem, string str){	
 	if(leftRem == 0 && rightRem == 0){
 		v.push_back(str);
-	}else{
-		if(leftRem > 0){
+		return;
+	}
+
+	if(leftRem > 0){
 			str.push_back('(');// Add left and recurse
 			addParen2(v, leftRem-1, rightRem, str);
-		}
-		if(rightRem > 0){
+			str.erase(str.end()-1);
+	}
+	if(rightRem > 0 && rightRem > leftRem){
 			str.push_back(')');
-			addParen2(v, leftRem, rightRem - 1, str);
-		}
+			addParen2(v, leftRem, rightRem-1, str);
 	}
 }
 
@@ -119,17 +119,18 @@ vector<string> generateParens2(int count){
 int main(){	
 
 	//parens no OK
-	auto ans = parens(1);
-	print(ans);
-	ans = parens(2);
-	print(ans);
-	ans = parens(3);
-	print(ans);
-	ans = parens(4);
-	print(ans);
-	ans = parens(5);
-	print(ans);	
-	cout << endl;
+	vector<string> ans;
+	//~ ans = parens(1);
+	//~ print(ans);
+	//~ ans = parens(2);
+	//~ print(ans);
+	//~ ans = parens(3);
+	//~ print(ans);
+	//~ ans = parens(4);
+	//~ print(ans);
+	//~ ans = parens(5);
+	//~ print(ans);	
+	//~ cout << endl;
 	
 	ans = generateParens(1);
 	print(ans);
