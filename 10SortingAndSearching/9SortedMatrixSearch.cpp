@@ -62,6 +62,8 @@ pair<int, int> find(vector<vector<int> > & matrix, int x){
 	}
 }
 
+//TODO find más copado que busque por subrectangulos...
+
 int main(){
 	int n, m, elem;
 	cin >> n >> m >> elem;
