@@ -1,0 +1,16 @@
+import java.io.*;
+import java.util.*;
+
+class IsUnique{
+    public static boolean isUnique(String s){
+        HashSet<Character> set = new HashSet<Character>()
+        
+    }
+    
+    
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        
+    }
+}
+
