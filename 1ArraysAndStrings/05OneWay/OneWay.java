@@ -6,11 +6,6 @@ class OneWay{
     public static boolean oneWay(String s, String t){
         int diff = Math.abs((s.length() - t.length()));
         if(diff > 1) return false;
-//        if(diff == 0){
-//            return oneUpdate(s, t);
-//        }else{
-//            return oneAddedOrRemoved(s, t);
-//        }
         return oneUpdate(s, t);
     }
     
@@ -35,7 +30,32 @@ class OneWay{
         return true;
     }
     
-    private static boolean oneAddedOrRemoved(String s, String t){
+    private static boolean oneEditAway(String first, String second){
+        int diff = Math.abs(first.length() - second.length());
+        if(diff > 1) return false;
+        String s1, s2;
+        if(first.length() < second.length()){
+            s1 = first;
+            s2 = second;
+        }else{
+            s2 = first;
+            s1 = second;
+        }
+        int i = 0;
+        int j = 0;
+        boolean foundDifference = false;
+        while(i < s1.length() && j < s2.length()){
+            if(s1.charAt(i) != s2.charAt(j)){
+                if(foundDifference) return false;
+                foundDifference = true;
+                if(s1.length() == s2.length()){
+                    i++;
+                }
+            }else{
+                i++;
+            }
+            j++;
+        }
         return true;
     }
 
@@ -45,6 +65,8 @@ class OneWay{
             String s = scan.next();
             String t = scan.next();
             boolean result = oneWay(s,t);
+            System.out.println(s + ", " + t + " ==> " + result);
+            result = oneEditAway(s,t);
             System.out.println(s + ", " + t + " ==> " + result); 
         }
         scan.close();
